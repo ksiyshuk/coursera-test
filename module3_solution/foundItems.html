@@ -1,7 +1,29 @@
-<h3>{{ myTitle }}</h3>
-<ul>
-  <li ng-repeat="item in foundItems">
-    {{ item.short_name }}, {{ item.name }}: {{ item.description }}
-    <button ng-click="onRemove({index: $index});">Don't want this one!</button>
-  </li>
-</ul>
+<h3 ng-show="foundItems.length"> {{ myTitle }} </h3>
+<table class="table" ng-show="foundItems.length > 0" ng-cloak>
+	<thead>
+		<tr>
+      <th>№</th>
+			<th>ID</th>
+			<th>Name</th>
+			<th>Description</th>
+			<th>Remove</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="item in foundItems">
+      <td> {{ $index + 1 }} </td>
+			<td> {{ item.short_name }} </td>
+			<td> {{ item.name }} </td>
+			<td> {{ item.description }} </td>
+			<td>
+				<button ng-click="onRemove({index: $index})" class="btn btn-danger btn-sm">
+					Don't want this one!
+				</button>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<div ng-show="foundItems.length === 0" class="alert alert-danger" role="alert">
+	<span class="glyphicon glyphicon-exclamation-sign"></span>
+	Nothing found
+</div>

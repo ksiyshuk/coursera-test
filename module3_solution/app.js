@@ -3,12 +3,13 @@
     angular.module('NarrowItDownApp', [])
     .controller('NarrowItDownController', NarrowItDownController)
     .service('MenuSearchService', MenuSearchService)
-    .directive('foundItems', FoundItems)
+    .directive('foundItems', FoundItemsDirective)
     .constant('ApiBasePath', "http://davids-restaurant.herokuapp.com");
 
-    function FoundItems() {
+    function FoundItemsDirective() {
       var ddo = {
         templateUrl: 'foundItems.html',
+        restrict: 'E',
         scope: {
           foundItems: '<',
           myTitle: '@title',
@@ -21,21 +22,27 @@
     NarrowItDownController.$inject = ['MenuSearchService'];
     function NarrowItDownController(MenuSearchService){
       var Ctrl = this;
-      var origTitle = "Items found: "
-      Ctrl.showItems = function() {
-        var promise = MenuSearchService.getMatchedMenuItems(Ctrl.searchTerm);
-        promise.then(function(response) {
+      var origTitle = " Match(es) Found"
+      Ctrl.showResult = function() {
+        if (Ctrl.searchTerm === undefined || Ctrl.searchTerm.trim() === "") {
+          Ctrl.found = [];
+          return;
+        }
+        MenuSearchService.getMatchedMenuItems(Ctrl.searchTerm)
+        .then(function(response) {
           Ctrl.found = response;
-          Ctrl.title = origTitle + Ctrl.found.length;
+          Ctrl.title = Ctrl.found.length + origTitle;
         })
         .catch(function(error) {
-          console.log("Something's wrong!");
+          console.log("Something went wrong...");
         })
       }
+
       Ctrl.removeItem = function(itemIndex) {
         Ctrl.found.splice(itemIndex, 1);
-        Ctrl.title = origTitle + Ctrl.found.length;
+        Ctrl.title = Ctrl.found.length + origTitle;
       };
+
     }
 
     MenuSearchService.$inject = ['$http', 'ApiBasePath'];
